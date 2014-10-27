@@ -1,13 +1,25 @@
-// if you checked "fancy-settings" in extensionizr.com, uncomment this lines
-
-// var settings = new Store("settings", {
-//     "sample_setting": "This is how you use Store.js to remember values"
-// });
-
-
-//example of using a message handler from the inject scripts
-chrome.extension.onMessage.addListener(
-  function(request, sender, sendResponse) {
-  	chrome.pageAction.show(sender.tab.id);
-    sendResponse();
-  });
+chrome.runtime.onMessage.addListener(function(m, sender, resp) {
+  var options = localStorage.uiPreviewerOptions;
+  console.log('hello', options, chrome);
+  if (options) {
+    options = JSON.parse(options);
+  } else {
+    options = {
+      repos: {
+        'rightscale/analytics_ui': {
+          mainButton: {
+            urlPattern: 'https://analytics.rightscale.com/?scout=${gitSha}',
+            buttonText: 'Preview UI',
+            icon: 'eye'
+          },
+          secondary: {
+            urlPattern: 'https://analytics-assets.rightscale.com/${gitSha}/docs/index.html',
+            buttonText: 'Docs',
+            icon: 'book'
+          }
+        }
+      }
+    };
+  }
+  resp(options);
+});
