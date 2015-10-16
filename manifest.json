@@ -14,18 +14,8 @@
     "https://*.github.com/*"
   ],
   "background": {
-    "page": "src/bg/background.html",
-    "persistent": true
+    "scripts": ["src/background.js"],
+    "persistent": false
   },
-  "options_page": "src/options/index.html",
-  "content_scripts": [
-    {
-      "matches": [
-        "https://github.com/*"
-      ],
-      "js": [
-        "src/inject/inject.js"
-      ]
-    }
-  ]
+  "options_page": "src/options/index.html"
 }

@@ -1,25 +1,22 @@
-var options;
-chrome.runtime.sendMessage({gimme: 'gimme'}, function(req) {
-  options = req;
-  setInterval(function() {
-    var repoPath = location.pathname.split('/').slice(1,3).join('/');
-    var repo = options.repos[repoPath];
-    if (!repo) {
-      repo = (function() {
-        for (var name in options.repos) {
-          var repoRegexp = new RegExp('^' + name.replace('*', '.+') + '$', 'i');
-          if (repoRegexp.test(repoPath)) {
-            return options.repos[name];
-          }
-        }
-      })();
-    }
-    if (repo && location.pathname.match(/\/pull\/\d/i)) {
-      attemptButtonInsertion(repo);
-    }
-  }, 1000);
-});
+var options = JSON.parse(localStorage.uiPreviewerButtonOptions || '{"repos":{}}');
 
+setInterval(function() {
+  var repoPath = location.pathname.split('/').slice(1,3).join('/');
+  var repo = options.repos[repoPath];
+  if (!repo) {
+    repo = (function() {
+      for (var name in options.repos) {
+        var repoRegexp = new RegExp('^' + name.replace('*', '.+') + '$', 'i');
+        if (repoRegexp.test(repoPath)) {
+          return options.repos[name];
+        }
+      }
+    })();
+  }
+  if (repo && location.pathname.match(/\/pull\/\d/i)) {
+    attemptButtonInsertion(repo);
+  }
+}, 1000);
 
 function attemptButtonInsertion(repo) {
   var link, href;
