@@ -1,19 +1,19 @@
 var options = JSON.parse(localStorage.uiPreviewerButtonOptions || '{"repos":{}}');
 
 function main() {
-  var repoPath = location.pathname.split('/').slice(1,3).join('/');
-  var repo = options.repos[repoPath];
+  var options = JSON.parse(window.localStorage.uiPreviewerButtonOptions || '{"repos":{}}'),
+      repoPath = window.location.pathname.split('/').slice(1, 3).join('/'),
+      repo = options.repos[repoPath];
+
   if (!repo) {
-    repo = (function() {
-      for (var name in options.repos) {
-        var repoRegexp = new RegExp('^' + name.replace('*', '.+') + '$', 'i');
-        if (repoRegexp.test(repoPath)) {
-          return options.repos[name];
-        }
-      }
-    })();
+    repo = Object.keys(options.repos).filter(function(name) {
+      var repoRegexp = new RegExp('^' + name.replace('*', '.+') + '$', 'i');
+
+      return repoRegexp.test(repoPath);
+    })[0];
   }
-  if (repo && location.pathname.match(/\/pull\/\d/i)) {
+
+  if (repo && window.location.pathname.match(/\/pull\/\d/i)) {
     attemptButtonInsertion(repo);
   }
 }
