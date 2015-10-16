@@ -1,6 +1,6 @@
 var options = JSON.parse(localStorage.uiPreviewerButtonOptions || '{"repos":{}}');
 
-setInterval(function() {
+function main() {
   var repoPath = location.pathname.split('/').slice(1,3).join('/');
   var repo = options.repos[repoPath];
   if (!repo) {
@@ -16,7 +16,7 @@ setInterval(function() {
   if (repo && location.pathname.match(/\/pull\/\d/i)) {
     attemptButtonInsertion(repo);
   }
-}, 1000);
+}
 
 function attemptButtonInsertion(repo) {
   var link, href;
@@ -91,3 +91,22 @@ function attemptButtonInsertion(repo) {
     }
   }
 }
+
+function isGitHubPageTransition(mutation) {
+  return mutation.type === 'childList' && mutation.addedNodes.length;
+}
+
+var observer = new MutationObserver(function(mutations) {
+  if (mutations.some(isGitHubPageTransition)) {
+    main();
+  }
+});
+
+observer.observe(document.querySelector('#js-repo-pjax-container'), {
+  childList: true,
+  attributes: false,
+  characterData: false,
+  subtree: true
+});
+
+main();
