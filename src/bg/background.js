@@ -1,6 +1,5 @@
 chrome.runtime.onMessage.addListener(function(m, sender, resp) {
   var options = localStorage.uiPreviewerOptions;
-  console.log('hello', options, chrome);
   if (options) {
     options = JSON.parse(options);
   } else {
