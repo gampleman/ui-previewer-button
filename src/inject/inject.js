@@ -40,9 +40,9 @@ function attemptButtonInsertion(repo) {
     }
 
   }
-  var parent = document.querySelector('.branch-status');
-  var successfulCommits = Array.prototype.map.call(document.querySelectorAll('.commit-build-statuses  .status-success') || [], function(el) {
-    return el.parentElement.parentElement.querySelector('code>.commit-id')
+  var parent = document.querySelector('.completeness-indicator-success+* .status-heading');
+  var successfulCommits = Array.prototype.map.call(document.querySelectorAll('.commit-build-statuses  .text-success') || [], function(el) {
+    return el.parentElement.parentElement.querySelector('code>.commit-id');
   }).filter(function(el) {return el;});
   if (successfulCommits.length > 0 && parent) {
     if (!parent.querySelector('.uiPreviewer')) {
@@ -53,27 +53,23 @@ function attemptButtonInsertion(repo) {
         link.href = href;
         link.className = 'minibutton uiPreviewer';
         link.innerHTML = '<span class="octicon octicon-' + repo.mainButton.icon + '"></span> ' + repo.mainButton.buttonText;
-        link.style.float = 'right';
-        link.style.marginTop = '-0.4em';
         link.style.marginRight = '0.2em';
         link.style.marginLeft = '0.4em';
         link.target = '_blank';
-        parent.insertBefore(link, parent.firstChild);
+        parent.appendChild(link);
       }
 
       if (repo.secondary) {
-        secondary = document.createElement('a');
+        var secondary = document.createElement('a');
         href = repo.secondary.urlPattern.replace(/\${gitSha}/, hash);
         secondary.href = href;
         secondary.setAttribute('aria-label', repo.secondary.buttonText);
         secondary.className = 'minibutton tooltipped tooltipped-s uiPreviewer';
         secondary.innerHTML = '<span class="octicon octicon-' + repo.secondary.icon + '"></span> ';
-        secondary.style.float = 'right';
-        secondary.style.marginTop = '-0.4em';
         secondary.style.marginRight = '0.4em';
         secondary.style.marginLeft = '0.2em';
         secondary.target = '_blank';
-        parent.insertBefore(secondary, link);
+        parent.appendChild(secondary);
       }
       if (document.querySelector('.build-status-description > span:last-of-type')) {
         document.querySelector('.build-status-description > span:last-of-type').style.width = '60%';
