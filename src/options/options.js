@@ -1,9 +1,9 @@
-var prefix = 'uiPreviewerOptions';
+var prefix = 'uiPreviewerButtonOptions';
 var form = document.getElementById('options_form');
 
 var currentIconField;
 
-var options;
+var options = JSON.parse(localStorage[prefix] || '{"repos": {}');
 
 function createUI() {
   for (name in options.repos) {
@@ -27,7 +27,7 @@ function generateRow(name, repo) {
     var out = '';
     out += '<p><label>Pattern: <input class="general-pattern" type="text" value="'+ button.pattern + '" /></label></p>';
     out += '<p><label>Url: <input class="pattern" type="text" value="'+ button.urlPattern + '" /></label></p>';
-    out += '<p>The <b>Pattern</b> is a RegExp and will be matched against the branch name. Matched groups 0-9 can be used in the URL to get parts of the branch. To get the whole branch name, simply use <code>.*</code for the pattern and <code>$0</code> in the URL.</p>'
+    out += '<p>The <b>Pattern</b> is a RegExp and will be matched against the branch name. Matched groups 0-9 can be used in the URL to get parts of the branch. To get the whole branch name, simply use <code>.*</code for the pattern and <code>$0</code> in the URL.</p>';
     return out;
   }));
   var a = document.createElement('a');
@@ -39,7 +39,7 @@ function generateRow(name, repo) {
     e.preventDefault();
   });
   a.href = '#';
-  a.className = 'remove'
+  a.className = 'remove';
   div.appendChild(a);
   return div;
 };
@@ -88,14 +88,12 @@ function generateButton(button, title, help, className, cb) {
   if (!button) {
     button = {
       urlPattern: '',
-      buttonText: '',
       icon: '',
       pattern: '.*'
     }
     div.classList.add('disabled');
   }
   out += cb(div, button, className);
-  out += '<p><label>Label: <input type="text" class="label" value="' + button.buttonText + '" /></label></p>';
   out += '<p><label>Icon: <input type="text" class="icon" value="' + button.icon + '" /></label></p>';
   div.innerHTML = out;
   div.querySelector('input[type=checkbox]').addEventListener('change', function() {
@@ -136,25 +134,22 @@ function save() {
     }
     settings[repoName] = data;
   }
-  localStorage[prefix] = JSON.stringify({'repos' : settings});
+  localStorage[prefix] = JSON.stringify({repos: settings});
 }
 
 function getButton(button) {
   var obj = {
     urlPattern: button.querySelector('.pattern').value,
-    buttonText: button.querySelector('.label').value,
     icon: button.querySelector('.icon').value
   };
   if (button.querySelector('.general-pattern')) {
-    obj.pattern = button.querySelector('.general-pattern').value
+    obj.pattern = button.querySelector('.general-pattern').value;
   }
   return obj;
 }
 
-chrome.runtime.sendMessage({gimme: 'gimme'}, function(req) {
-  options = req;
-  createUI();
-});
+
+createUI();
 
 document.getElementById('save').addEventListener('click', save);
 document.getElementById('add').addEventListener('click', function() {

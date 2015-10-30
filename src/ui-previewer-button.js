@@ -1,21 +1,23 @@
-var options = JSON.parse(localStorage.uiPreviewerButtonOptions || '{"repos":{}}');
-
 function main() {
-  var options = JSON.parse(window.localStorage.uiPreviewerButtonOptions || '{"repos":{}}'),
-      repoPath = window.location.pathname.split('/').slice(1, 3).join('/'),
-      repo = options.repos[repoPath];
+  chrome.runtime.sendMessage({method: 'getUiPreviewerButtonConfig'}, function(options) {
+    var locationParts = window.location.pathname.split('/'),
+        repoPath = locationParts.slice(1, 3).join('/'),
+        repo = options.repos[repoPath];
 
-  if (!repo) {
-    repo = Object.keys(options.repos).filter(function(name) {
-      var repoRegexp = new RegExp('^' + name.replace('*', '.+') + '$', 'i');
+    if (!repo) {
+      repo = Object.keys(options.repos).filter(function(name) {
+        var repoRegexp = new RegExp('^' + name.replace('*', '.+') + '$', 'i');
 
-      return repoRegexp.test(repoPath);
-    })[0];
-  }
+        return repoRegexp.test(repoPath);
+      })[0];
+    }
 
-  if (repo && window.location.pathname.match(/\/pull\/\d/i)) {
-    attemptButtonInsertion(repo);
-  }
+    if (repo && window.location.pathname.match(/\/pull\/\d/i)) {
+      attemptButtonInsertion(repo);
+    }
+  });
+}
+
 }
 
 function attemptButtonInsertion(repo) {
@@ -31,7 +33,7 @@ function attemptButtonInsertion(repo) {
       });
       link.href = href;
       link.className = 'uiPreviewer';
-      link.innerHTML = '<span class="octicon octicon-' + repo.branch.icon + '"></span> ' + repo.branch.buttonText;
+      link.innerHTML = '<span class="octicon octicon-' + repo.branch.icon + '"></span>';
       link.target = '_blank';
       document.querySelector('.current-branch:last-of-type').parentElement.appendChild(link);
     }
@@ -49,7 +51,7 @@ function attemptButtonInsertion(repo) {
         href = repo.mainButton.urlPattern.replace(/\${gitSha}/, hash);
         link.href = href;
         link.className = 'minibutton uiPreviewer';
-        link.innerHTML = '<span class="octicon octicon-' + repo.mainButton.icon + '"></span> ' + repo.mainButton.buttonText;
+        link.innerHTML = '<span class="octicon octicon-' + repo.mainButton.icon + '"></span>';
         link.style.marginRight = '0.2em';
         link.style.marginLeft = '0.4em';
         link.target = '_blank';
@@ -62,7 +64,7 @@ function attemptButtonInsertion(repo) {
         secondary.href = href;
         secondary.setAttribute('aria-label', repo.secondary.buttonText);
         secondary.className = 'minibutton tooltipped tooltipped-s uiPreviewer';
-        secondary.innerHTML = '<span class="octicon octicon-' + repo.secondary.icon + '"></span> ';
+        secondary.innerHTML = '<span class="octicon octicon-' + repo.secondary.icon + '"></span>';
         secondary.style.marginRight = '0.4em';
         secondary.style.marginLeft = '0.2em';
         secondary.target = '_blank';

@@ -8,3 +8,11 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo) {
     }
   });
 });
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  if (request.method === 'getUiPreviewerButtonConfig') {
+    sendResponse(JSON.parse(localStorage.uiPreviewerButtonOptions || '{"repos": {}}'));
+  } else if (request.method === 'setUiPreviewerButtonConfig') {
+    localStorage[request.key] = JSON.stringify(request.data);
+  }
+});
