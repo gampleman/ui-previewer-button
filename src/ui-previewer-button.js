@@ -14,10 +14,31 @@ function main() {
 
     if (repo && window.location.pathname.match(/\/pull\/\d/i)) {
       attemptButtonInsertion(repo);
+    } else if (locationParts.length === 3) {
+      attemptConfigInsertion(repoPath, options);
     }
   });
 }
 
+function attemptConfigInsertion(repoPath, options) {
+  var currentNode, newConfig,
+      magicHeader = document.querySelector('#user-content-ui-previewer-button-config');
+
+  if (!magicHeader) { return; }
+
+  currentNode = magicHeader.parentNode;
+
+  while (currentNode) {
+    if (currentNode.classList && currentNode.classList.contains('highlight')) {
+      newConfig = JSON.parse(currentNode.textContent);
+      options.repos[repoPath] = newConfig;
+      currentNode = null;
+
+      chrome.runtime.sendMessage({method: 'setUiPreviewerButtonConfig', data: options});
+    } else {
+      currentNode = currentNode.nextSibling;
+    }
+  }
 }
 
 function attemptButtonInsertion(repo) {
