@@ -40,3 +40,8 @@ steps:
 
 [web-store]: https://chrome.google.com/webstore/detail/ui-previewer-button/calcadjojlbjppijehnmjhpccdhknodk?hl=en&gl=GB
 [scoutfile-post]: http://eng.rightscale.com/2014/11/18/front-end-deployment.html
+
+## Maintained by
+
+- [Sean McGivern](https://github.com/smcgivern)
+- [Jakub Hampl](https://github.com/gampleman)
