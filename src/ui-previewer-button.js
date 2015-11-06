@@ -64,8 +64,8 @@ function attemptButtonInsertion(repo) {
   var successfulCommits = Array.prototype.map.call(document.querySelectorAll('.commit-build-statuses  .text-success') || [], function(el) {
     return el.parentElement.parentElement.querySelector('code>.commit-id');
   }).filter(function(el) {return el;});
-  if (successfulCommits.length > 0 && parent) {
-    if (!parent.querySelector('.uiPreviewer')) {
+  if (successfulCommits.length > 0) {
+    if (parent && !parent.querySelector('.uiPreviewer')) {
       if (repo.mainButton) {
         var hash = successfulCommits[successfulCommits.length - 1].href.match(/[a-z\d]{40}/i)[0];
         link = document.createElement('a');
