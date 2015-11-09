@@ -1,2 +1,12 @@
 language: node_js
-script: echo Success
+env:
+  global:
+    - DISPLAY=:99
+    - CHROME_PATH=/usr/bin/chromium-browser
+before_script:
+  - wget https://selenium-release.storage.googleapis.com/2.47/selenium-server-standalone-2.47.0.jar
+  - wget http://chromedriver.storage.googleapis.com/2.12/chromedriver_linux64.zip
+  - unzip chromedriver_linux64.zip
+  - java -jar selenium-server-standalone-2.47.0.jar &
+  - sh -e /etc/init.d/xvfb start
+  - export PATH=$PATH:$PWD

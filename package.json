@@ -1,0 +1,21 @@
+{
+  "name": "ui-previewer-button",
+  "version": "0.0.1",
+  "description": "Add links in pull requests to successful builds based on the SHA",
+  "scripts": {
+    "test": "node test/selenium.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rightscale/ui-previewer-button.git"
+  },
+  "author": "RightScale",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rightscale/ui-previewer-button/issues"
+  },
+  "homepage": "https://github.com/rightscale/ui-previewer-button",
+  "devDependencies": {
+    "webdriverio": "^3.2.6"
+  }
+}
