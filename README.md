@@ -1,5 +1,7 @@
 # UI Previewer Button
 
+[![Build status](https://travis-ci.org/rightscale/ui-previewer-button.svg)](https://travis-ci.org/rightscale/ui-previewer-button)
+
 [Get it in the Chrome Web Store!][web-store]
 
 Add links in pull requests to successful builds based on the SHA.
