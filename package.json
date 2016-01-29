@@ -16,6 +16,7 @@
   },
   "homepage": "https://github.com/rightscale/ui-previewer-button",
   "devDependencies": {
-    "webdriverio": "^3.2.6"
+    "webdriverio": "^3.2.6",
+    "uglifyjs": "^2.4.10"
   }
 }
