@@ -3,7 +3,15 @@ var form = document.getElementById('options_form');
 
 var currentIconField;
 
-var options = JSON.parse(localStorage[prefix] || '{"repos": {}');
+var options = JSON.parse(localStorage[prefix] || '{"repos": {}}');
+
+function setConfig(settings) {
+  if (PLATFORM === 'chrome' || PLATFORM === 'firefox') {
+    localStorage[prefix] = JSON.stringify(settings);
+  } else if (PLATFORM === 'safari') {
+    safari.self.tab.dispatchMessage('setUiPreviewerButtonConfig', settings);
+  }
+}
 
 function createUI() {
   for (name in options.repos) {
@@ -134,7 +142,7 @@ function save() {
     }
     settings[repoName] = data;
   }
-  localStorage[prefix] = JSON.stringify({repos: settings});
+  setConfig({repos: settings});
 }
 
 function getButton(button) {

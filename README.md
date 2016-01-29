@@ -28,6 +28,54 @@ steps:
    about the format, visit the extension's options page, where you can also configure
    repos manually.
 
+## Building
+
+Make sure you have npm in your path. Run `make`. This will build as much as can be
+reasonably automated for each supported platform. Unfortunately, to finish building,
+test and deploy, you will need to do a few manual steps:
+
+#### Firefox
+
+1. You will need either a Nightly or Developer edition build.
+2. Go to about:config, type `xpinstall.signatures.required` and change the setting to be `false`.
+3. Go to about:addons and drag and drop the `build/artifacts/ui-previewer-button.xpi` to this page.
+4. Click **Install**. Now you can play with your extension. If you rebuild, you will need to repeat steps 3 and 4.
+
+#### Safari
+
+1. Make sure you can see the Develop menu in the menu bar. If you can't, you can enable it in **Preferences > Advanced > Show Develop menu in menu bar**.
+2. Click **Develop > Show Extension Builder**.
+3. Click the litle **+** button in the bottom left and click **Add Extension...** in the pop-up menu.
+4. Select `build/artifacts/ui-previewer-button.safariextension` in the dialog.
+5. Click the **Install** button. Ignore the warnings and enter your password. Now the extension is loaded in your browser. If you rebuild, you only need to hit the **Reload** button. If you restart Safari, you will need to **Install** again.
+
+#### Chrome
+
+1. Go to chrome://extensions/.
+2. Check the **Developer mode** checkbox.
+3. Click **Load unpacked extension...**
+4. Select `build/chrome` in the navigator. You now have the extension loaded in your browser. You can hit the **Reload** button to reload it when you rebuild.
+
+## Deploying
+
+Follow the instructions for building above. Then follow the following steps for each browser:
+
+#### Firefox
+
+1. Go to https://addons.mozilla.org
+2. Register for an account.
+3. Slack @gampleman to give you access.
+4. Click **Tools > Submit a new version**
+5. Go through the wizard.
+
+#### Chrome
+
+1. Ask @alikhajeh1 to submit it for you.
+
+#### Safari
+
+Currently we don't have a certificate, so this doesn't work yet.
+
 ## UI Previewer Button config
 
 ```json

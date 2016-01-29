@@ -1,6 +1,6 @@
 var webdriverio = require('webdriverio'),
     path = require('path'),
-    extensionPath = path.join(__dirname, '/..'),
+    extensionPath = path.join(__dirname, '/../build/chrome'),
     chromeOptions = {binary: process.env.CHROME_PATH, args: ['load-extension=' + extensionPath, '--test-type', '--no-sandbox']},
     options = {desiredCapabilities: {browserName: 'chrome', chromeOptions: chromeOptions}},
     client = webdriverio.remote(options);
