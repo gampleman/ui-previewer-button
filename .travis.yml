@@ -10,4 +10,5 @@ before_script:
   - unzip chromedriver_linux64.zip
   - java -jar selenium-server-standalone-2.47.0.jar &
   - sh -e /etc/init.d/xvfb start
+  - sleep 5
   - export PATH=$PATH:$PWD
