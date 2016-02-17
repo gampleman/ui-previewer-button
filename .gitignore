@@ -2,3 +2,4 @@ node_modules
 *.jar
 build
 sketchtool
+octicons-master
