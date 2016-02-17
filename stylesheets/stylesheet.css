@@ -270,11 +270,11 @@ a {
   .site-footer {
     font-size: 0.9rem; } }
 .popup {
-  width: 80vw;
-  height: 80vh;
+  width: 90vw;
+  height: 90vh;
   position: fixed;
-  top: 10vh;
-  left: 10vw;
+  top: 5vh;
+  left: 5vw;
   border: 1px;
   box-shadow: 1px 3px 80px rgba(0,0,0,0.6);
   background-color: white;
@@ -289,6 +289,13 @@ a {
 }
 .popup .icon:hover {
   color: #1b6bb2;
+}
+.popup textarea {
+  clear: both;
+  display: block;
+  width: 80%;
+  height: 100px;
+  margin: 1em;
 }
 .disabled {
   color: rgb(180, 180, 180);
