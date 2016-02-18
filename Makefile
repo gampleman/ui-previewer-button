@@ -36,11 +36,11 @@ build/firefox/src/%.js: src/%.js node_modules/.bin/uglifyjs
 
 build/chrome/src/%.js: src/%.js node_modules/.bin/uglifyjs
 	@mkdir -p $(@D)
-	uglifyjs --screw-ie8 --beautify --define 'PLATFORM="chrome"' --comments all --compress=dead_code,keep_fnames,warnings=false --output $@ $<
+	node_modules/.bin/uglifyjs --screw-ie8 --beautify --define 'PLATFORM="chrome"' --comments all --compress=dead_code,keep_fnames,warnings=false --output $@ $<
 
 build/artifacts/ui-previewer-button.safariextension/src/%.js: src/%.js node_modules/.bin/uglifyjs
 	@mkdir -p $(@D)
-	uglifyjs --screw-ie8 --beautify --define 'PLATFORM="safari"' --comments all --compress=dead_code,keep_fnames,warnings=false --output $@ $<
+	node_modules/.bin/uglifyjs --screw-ie8 --beautify --define 'PLATFORM="safari"' --comments all --compress=dead_code,keep_fnames,warnings=false --output $@ $<
 
 build/firefox/icons/%.png: icons/%.png
 	@mkdir -p $(@D)
