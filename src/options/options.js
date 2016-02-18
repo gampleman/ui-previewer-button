@@ -1,7 +1,7 @@
 var prefix = 'uiPreviewerButtonOptions';
 var form = document.getElementById('options_form');
 
-var currentIconField;
+var currentIconField, currentIconPreview;
 
 var options = JSON.parse(localStorage[prefix] || '{"repos": {}}');
 
@@ -53,30 +53,44 @@ function generateRow(name, repo) {
 };
 
 function octiconHelp() {
-  var icons = ["alert","alignment-align","alignment-aligned-to","alignment-unalign","arrow-down","arrow-left","arrow-right","arrow-small-down","arrow-small-left","arrow-small-right","arrow-small-up","arrow-up","beer","book","bookmark","briefcase","broadcast","browser","bug","calendar","check","checklist","chevron-down",
-  "chevron-left","chevron-right","chevron-up","circle-slash","circuit-board","clippy","clock","cloud-download","cloud-upload","code","color-mode","comment","comment-discussion","credit-card","dash","dashboard","database","device-camera","device-camera-video","device-desktop","device-mobile","diff","diff-added","diff-ignored","diff-modified",
-  "diff-removed","diff-renamed","ellipsis","eye","file-binary","file-code","file-directory","file-media","file-pdf","file-submodule","file-symlink-directory","file-symlink-file","file-text","file-zip","flame","fold","gear","gift","gist","gist-secret","git-branch","git-commit","git-compare","git-merge","git-pull-request",
-  "globe","graph","heart","history","home","horizontal-rule","hourglass","hubot","inbox","info","issue-closed","issue-opened","issue-reopened","jersey","jump-down","jump-left","jump-right","jump-up","key","keyboard","law","light-bulb","link","link-external","list-ordered",
-  "list-unordered","location","lock","mail","mail-read","mail-reply","mark-github","markdown","megaphone","mention","microscope","milestone","mirror","mortar-board","move-down","move-left","move-right","move-up","mute","no-newline","octoface","organization","package","paintcan",
-  "pencil","person","pin","playback-fast-forward","playback-pause","playback-play","playback-rewind","plug","plus","podium","primitive-dot","primitive-square","pulse","puzzle","question","quote","radio-tower","repo","repo-clone","repo-force-push","repo-forked","repo-pull","repo-push","rocket","rss",
-  "ruby","screen-full","screen-normal","search","server","settings","sign-in","sign-out","split","squirrel","star","steps","stop","sync","tag","telescope","terminal","three-bars","tools","trashcan","triangle-down","triangle-left","triangle-right","triangle-up","unfold",
-  "unmute","versions","x","zap"];
 
   var div = document.createElement('div');
   div.className = 'popup';
   div.id = 'icon-help-popup';
-  icons.forEach(function(icon) {
-    var link = document.createElement('a');
-    link.href = '#';
-    link.className = 'icon';
-    link.innerHTML = '<span class="octicon octicon-' + icon + '"></span>';
-    link.addEventListener('click', function() {
-      currentIconField.value = icon;
-      div.style.display = 'none';
-    });
-    div.appendChild(link);
+  for (var iconName in window.icons) {
+    if (window.icons.hasOwnProperty(iconName)) {
+      (function(icon) {
+        var link = document.createElement('a');
+        link.href = '#';
+        link.className = 'icon';
+        link.innerHTML = icon;
+        link.addEventListener('click', function() {
+          currentIconField.value = icon;
+          currentIconPreview.innerHTML = icon;
+          div.style.display = 'none';
+        });
+        div.appendChild(link);
+      })(window.icons[iconName]);
+    }
+  }
+  var textarea = document.createElement('textarea');
+  textarea.setAttribute('placeholder', 'Or paste your custom 16x16 SVG here...');
+  div.appendChild(textarea);
+  var useTextarea = document.createElement('button');
+  useTextarea.innerText = 'Use Custom SVG';
+  useTextarea.addEventListener('click', function() {
+    var icon = textarea.value;
+    currentIconField.value = icon;
+    currentIconPreview.innerHTML = icon;
+    div.style.display = 'none';
   });
-
+  div.appendChild(useTextarea);
+  var cancel = document.createElement('button');
+  cancel.innerText = 'Cancel';
+  cancel.addEventListener('click', function() {
+    div.style.display = 'none';
+  });
+  div.appendChild(cancel);
   return div;
 }
 
@@ -84,6 +98,15 @@ function urlPattern(div, button) {
   return '<p><label>Url Pattern: <input type="text" class="pattern" value="' + button.urlPattern + '" /></label></p>' +
   '<p>You can use <code>${gitSha}</code> where you want the sha of the commit to appear.</p>';
 }
+
+function escapeHtml(unsafe) {
+    return unsafe
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+ }
 
 function generateButton(button, title, help, className, cb) {
   var div = document.createElement('div');
@@ -102,7 +125,11 @@ function generateButton(button, title, help, className, cb) {
     div.classList.add('disabled');
   }
   out += cb(div, button, className);
-  out += '<p><label>Icon: <input type="text" class="icon" value="' + button.icon + '" /></label></p>';
+  if (!button.icon.match(/^\s*<\??(svg|xml|doctype)/i)) {
+    button.icon = window.icons.bug;
+  }
+  out += '<p><label>Icon: <input type="hidden" class="icon" value="' + escapeHtml(button.icon) + '" /><span class="icon-preview">' + button.icon + '</preview></label></p>';
+  out += '<p><label>Label:</label> <input type="text" class="button-text" placeholder="Optional" value="' + (button.buttonText ? button.buttonText : '') + '" /></p>';
   div.innerHTML = out;
   div.querySelector('input[type=checkbox]').addEventListener('change', function() {
     if (div.querySelector('input[type=checkbox]').checked) {
@@ -111,16 +138,17 @@ function generateButton(button, title, help, className, cb) {
       div.classList.add('disabled');
     }
   });
-  var iconLink = document.createElement('a');
-  iconLink.innerText = 'Select';
+  var iconLink = document.createElement('button');
+  iconLink.innerText = 'Select...';
   iconLink.addEventListener('click', function(e) {
     document.getElementById('icon-help-popup').style.display = 'block';
     currentIconField = div.querySelector('.icon');
+    currentIconPreview = div.querySelector('.icon-preview');
     e.preventDefault();
   });
   iconLink.href = '#';
   var selection = div.querySelectorAll('p');
-  selection[selection.length - 1].appendChild(iconLink);
+  selection[selection.length - 2].appendChild(iconLink);
   return div;
 }
 
@@ -146,9 +174,11 @@ function save() {
 }
 
 function getButton(button) {
+  var buttonText = button.querySelector('.button-text').value;
   var obj = {
     urlPattern: button.querySelector('.pattern').value,
-    icon: button.querySelector('.icon').value
+    icon: button.querySelector('.icon').value,
+    buttonText: buttonText === '' ? null : buttonText
   };
   if (button.querySelector('.general-pattern')) {
     obj.pattern = button.querySelector('.general-pattern').value;
@@ -163,7 +193,7 @@ document.getElementById('save').addEventListener('click', save);
 document.getElementById('add').addEventListener('click', function() {
   form.appendChild(generateRow( '', {mainButton: {
     urlPattern: '',
-    buttonText: '',
+    buttonText: null,
     icon: ''
   }}));
 });
