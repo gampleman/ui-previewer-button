@@ -65,7 +65,7 @@ Follow the instructions for building above. Then follow the following steps for 
 1. Go to https://addons.mozilla.org
 2. Register for an account.
 3. Slack @gampleman to give you access.
-4. Click **Tools > Submit a new version**
+4. Go to https://addons.mozilla.org/en-US/developers/addon/ui-previewer-button/versions#version-upload
 5. Go through the wizard.
 
 #### Chrome

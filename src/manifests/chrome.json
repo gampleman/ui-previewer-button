@@ -1,6 +1,6 @@
 {
   "name": "UI Previewer Button",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "manifest_version": 2,
   "description": "Adds a preview button to a GitHub repo",
   "homepage_url": "http://gampleman.eu",
