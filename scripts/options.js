@@ -146,14 +146,14 @@ function save() {
     if (document.querySelector('.branch-button input[type=checkbox]').checked) {
       settings.branch = getButton(document.querySelector('.branch-button'));
     }
-  document.getElementById('result').innerHTML = '## [UI Previewer Button](https://rightscale.github.io/ui-previewer-button/) config\n\n```json\n' + JSON.stringify(settings, null, 2) + '\n```';
+  document.getElementById('result').innerHTML = '### [UI Previewer Button](https://rightscale.github.io/ui-previewer-button/) config\n\n```json\n' + escapeHtml(JSON.stringify(settings, null, 2)) + '\n```';
 }
 
 function getButton(button) {
   var buttonText = button.querySelector('.button-text').value;
   var obj = {
     urlPattern: button.querySelector('.pattern').value,
-    icon: escapeHtml(button.querySelector('.icon').value),
+    icon: button.querySelector('.icon').value,
     buttonText: buttonText === '' ? null : buttonText
   };
   if (button.querySelector('.general-pattern')) {
