@@ -49,8 +49,31 @@ function generateRow(name, repo) {
   a.href = '#';
   a.className = 'remove';
   div.appendChild(a);
+  var button = document.createElement('button');
+  button.innerText = 'Share';
+  button.addEventListener('click', function(e) {
+    document.getElementById('export-text').value = '### [UI Previewer Button](https://rightscale.github.io/ui-previewer-button/) config\n\n```json\n' + JSON.stringify(getRepoConfig(div), null, 2) + '\n```';
+    document.getElementById('export-modal').style.display = 'block';
+    e.preventDefault();
+  });
+  button.className = 'share-btn';
+  div.appendChild(button);
   return div;
 };
+
+function exportModal() {
+  var div = document.createElement('div');
+  div.className = 'popup';
+  div.id = 'export-modal';
+  div.innerHTML = '<h3>Auto-configuration snippet</h3><p>Paste this snippet into your README.md and anyone else with this extension installed will have it configured automatically.</p><p><textarea id="export-text"></textarea></p>';
+  var cancel = document.createElement('button');
+  cancel.innerText = 'Cancel';
+  cancel.addEventListener('click', function() {
+    div.style.display = 'none';
+  });
+  div.appendChild(cancel);
+  return div;
+}
 
 function octiconHelp() {
 
@@ -152,23 +175,28 @@ function generateButton(button, title, help, className, cb) {
   return div;
 }
 
+function getRepoConfig(repo) {
+  var repoName = repo.querySelector('.repo-name').value;
+  var data = {};
+  if (repo.querySelector('.primary-button input[type=checkbox]').checked) {
+    data.mainButton = getButton(repo.querySelector('.primary-button'));
+  }
+  if (repo.querySelector('.secondary-button input[type=checkbox]').checked) {
+    data.secondary = getButton(repo.querySelector('.secondary-button'));
+  }
+  if (repo.querySelector('.branch-button input[type=checkbox]').checked) {
+    data.branch = getButton(repo.querySelector('.branch-button'));
+  }
+  return data;
+}
+
 function save() {
   var settings = {};
   var repos = form.querySelectorAll('.repo');
   for(var i = 0, l = repos.length; i < l; i++) {
     var repo = repos[i];
-    var repoName = repo.querySelector('.repo-name').value;
-    var data = {};
-    if (repo.querySelector('.primary-button input[type=checkbox]').checked) {
-      data.mainButton = getButton(repo.querySelector('.primary-button'));
-    }
-    if (repo.querySelector('.secondary-button input[type=checkbox]').checked) {
-      data.secondary = getButton(repo.querySelector('.secondary-button'));
-    }
-    if (repo.querySelector('.branch-button input[type=checkbox]').checked) {
-      data.branch = getButton(repo.querySelector('.branch-button'));
-    }
-    settings[repoName] = data;
+
+    settings[repoName] = getRepoConfig(repo);
   }
   setConfig({repos: settings});
 }
@@ -198,3 +226,4 @@ document.getElementById('add').addEventListener('click', function() {
   }}));
 });
 document.body.appendChild(octiconHelp());
+document.body.appendChild(exportModal());
