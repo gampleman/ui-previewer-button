@@ -34,6 +34,14 @@ if (PLATFORM === 'chrome' || !window.uiPreviewerButtonInjected) {
     svg.style.display = 'inline-block';
     svg.style['vertical-align'] = 'bottom';
     element.appendChild(span);
+    return span;
+  }
+
+  function resolveString(str, data) {
+    for (var key in data) {
+      str = str.replace(new RegExp('\\${' + key + '}', 'g'), data[key]);
+    }
+    return str;
   }
 
   function main() {
@@ -91,7 +99,9 @@ if (PLATFORM === 'chrome' || !window.uiPreviewerButtonInjected) {
         });
         link.href = href;
         link.className = 'uiPreviewer';
-        appendIcon(repo.branch.icon, link);
+        var iconSpan = appendIcon(repo.branch.icon, link);
+        iconSpan.style.position = 'relative';
+        iconSpan.style.top = '-3px';
         if (repo.branch.buttonText) {
           var span = document.createElement('span');
           span.innerText = repo.branch.buttonText;
@@ -103,15 +113,17 @@ if (PLATFORM === 'chrome' || !window.uiPreviewerButtonInjected) {
 
     }
     var parent = document.querySelector('.completeness-indicator-success+* .status-heading');
-    var successfulCommits = Array.prototype.map.call(document.querySelectorAll('.commit-build-statuses  .text-success') || [], function(el) {
-      return el.parentElement.parentElement.querySelector('code>.commit-id');
+    var successfulCommits = Array.prototype.map.call(document.querySelectorAll('.commit-build-statuses  .text-green') || [], function(el) {
+      return el.parentElement.parentElement.parentElement.querySelector('code>.commit-id');
     }).filter(function(el) {return el;});
     if (successfulCommits.length > 0) {
       if (parent && !parent.querySelector('.uiPreviewer')) {
         if (repo.mainButton) {
           var hash = successfulCommits[successfulCommits.length - 1].href.match(/[a-z\d]{40}/i)[0];
           link = document.createElement('a');
-          href = repo.mainButton.urlPattern.replace(/\${gitSha}/, hash);
+          href = resolveString(repo.mainButton.urlPattern, {gitSha: hash, gitShaShort: function() {
+            return hash.substr(0, 7);
+          }});
           link.href = href;
           link.className = 'minibutton uiPreviewer';
           if (repo.mainButton.buttonText) {
@@ -127,7 +139,9 @@ if (PLATFORM === 'chrome' || !window.uiPreviewerButtonInjected) {
 
         if (repo.secondary) {
           var secondary = document.createElement('a');
-          href = repo.secondary.urlPattern.replace(/\${gitSha}/, hash);
+          href = resolveString(repo.secondary.urlPattern, {gitSha: hash, gitShaShort: function() {
+            return hash.substr(0, 7);
+          }});
           secondary.href = href;
           secondary.className = 'minibutton uiPreviewer';
           if (repo.secondary.buttonText) {
@@ -146,23 +160,28 @@ if (PLATFORM === 'chrome' || !window.uiPreviewerButtonInjected) {
       }
 
       for (var i = 0, l = successfulCommits.length; i < l; i++) {
-        if (!successfulCommits[i].parentElement.previousElementSibling.previousElementSibling) {
+        if (!successfulCommits[i].parentElement.parentElement.nextElementSibling) {
           hash = successfulCommits[i].href.match(/[a-z\d]{40}/i)[0];
           link = document.createElement('a');
-          link.className = 'uiPreviewer-link';
+          link.className = 'uiPreviewer-link tooltipped tooltipped-w';
           if (repo.mainButton.buttonText) {
             link.setAttribute('aria-label', repo.mainButton.buttonText);
             link.setAttribute('title', repo.mainButton.buttonText);
           }
 
-          href = repo.mainButton.urlPattern.replace(/\${gitSha}/, hash);
+          href = resolveString(repo.mainButton.urlPattern, {gitSha: hash, gitShaShort: function() {
+            return hash.substr(0, 7);
+          }});
           link.href = href;
 
           appendIcon(repo.mainButton.icon, link);
           link.style.color = '#bbb';
           link.target = '_blank';
-          parent = successfulCommits[i].parentElement.parentElement;
-          parent.insertBefore(link, parent.firstChild);
+          parent = successfulCommits[i].parentElement.parentElement.parentElement;
+          var cell = document.createElement('td');
+          cell.className = 'previewer-cell';
+          cell.appendChild(link);
+          parent.appendChild(cell);
         }
       }
     }
